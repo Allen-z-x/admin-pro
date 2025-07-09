@@ -1,4 +1,4 @@
-import { post } from '@/http/request'
+import { post, get } from '@/http/request'
 
 export type LoginRequest = {
   username: string
@@ -15,9 +15,13 @@ export type LoginResponse = {
 }
 // 定义的接口
 export const userLogin = async (data?: LoginRequest) => {
-  return post<LoginResponse>({}, '/login', data)
+  return post<{ data: LoginResponse }>({}, '/login', data)
 }
 
 export const refreshUserInfo = async (data?: reLoginRequest) => {
-  return post<LoginResponse>({}, '/getUserInfo', data)
+  return post<{ data: LoginResponse }>({}, '/getUserInfo', data)
+}
+
+export const getUserList = async (data = {}) => {
+  return get({}, '/getUserList', data)
 }

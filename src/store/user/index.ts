@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { reactive } from 'vue'
 import { userLogin, refreshUserInfo } from '@/api/user'
+import router from '@/router'
 
 export interface UserState {
   username: string
@@ -23,10 +24,10 @@ export const useUserStore = defineStore(
     })
     const storeUserLogin = (data: LoginRequest) => {
       return userLogin(data).then((res) => {
-        userState.username = res.username
-        userState.roles = res.roles
-        userState.accessToken = res.accessToken
-        return res
+        userState.username = res.data.username
+        userState.roles = res.data.roles
+        userState.accessToken = res.data.accessToken
+        return res.data
       })
     }
     const storeRefreshUserInfo = () => {
@@ -35,26 +36,32 @@ export const useUserStore = defineStore(
           accessToken: userState.accessToken
         })
           .then((res) => {
-            userState.username = res.username
-            userState.roles = res.roles
-            userState.accessToken = res.accessToken
+            userState.username = res.data.username
+            userState.roles = res.data.roles
+            userState.accessToken = res.data.accessToken
           })
           .catch(() => {
             userState.accessToken = ''
           })
       }
     }
+    const logout = () => {
+      sessionStorage.removeItem('userInfo')
+      userState.accessToken = ''
+      router.push('/login')
+    }
     return {
       userState,
       storeUserLogin,
-      storeRefreshUserInfo
+      storeRefreshUserInfo,
+      logout
     }
   },
   {
     persist: {
       key: 'userInfo',
       storage: sessionStorage,
-      pick: ['accessToken']
+      pick: ['userState.accessToken'] // 只持久化 accessToken
     }
   }
 )

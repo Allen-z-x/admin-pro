@@ -47,7 +47,10 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       ElementPlus({}),
       // 自动导入组件
       AutoImport({
-        imports: ['vue'],
+        imports: ['vue', 'vue-router'],
+        eslintrc: {
+          enabled: true
+        },
         resolvers: [
           ElementPlusResolver(),
           // https://icon-sets.iconify.design/

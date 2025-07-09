@@ -33,15 +33,32 @@ Object.values(modules).forEach((module) => {
   routes.push(module.default)
 })
 routes.push(aboutRouter)
+
 const router = createRouter({
   history: createWebHistory(),
   routes
 })
+// function isLogin() {
+//     const token = sessionStorage.getItem('userInfo');
+//     if (token) {
+//         const objToken = JSON.parse(token);
+//         return objToken.accessToken ? true : false;
+//     } else {
+//         return false;
+//     }
+// }
+const noStatusPage = ['/login', '/about']
 router.beforeEach(async (_to, _from, next) => {
   NProgress.start()
-  next()
+  const token = JSON.parse(sessionStorage.getItem('userInfo') || '{}')
+  const userIsLogin = !!token?.userState?.accessToken
+  if (userIsLogin || noStatusPage.includes(_to.path)) {
+    next()
+  } else {
+    next('/login')
+  }
 })
-router.afterEach(() => {
+router.afterEach((_to) => {
   NProgress.done()
 })
 export default router

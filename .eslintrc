@@ -3,7 +3,8 @@
     "plugin:vue/base",
     "plugin:vue/recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended" // 集成 prettier
+    "plugin:prettier/recommended",
+    ".eslintrc-auto-import.json"
   ],
   "plugins": ["vue", "prettier"],
   "env": {
