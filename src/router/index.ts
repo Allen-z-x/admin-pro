@@ -1,16 +1,8 @@
-import { RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
+import { RouteRecordRaw, createRouter, createWebHashHistory } from 'vue-router'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-// 配置路由
-// const routes: Array<RouteRecordRaw> = [
-//     {
-//         path: '/',
-//         name: 'home',
-//         component: () => import('../views//home/index.vue'),
-//         meta: {},
-//         children: [],
-//     },
-// ];
+import { useSettingStore } from '@/store/setting'
+import { getTitle } from '@/utils'
 
 export const aboutRouter = {
   path: '/about',
@@ -29,34 +21,35 @@ const modules: Record<string, any> = import.meta.glob(['./modules/*.ts'], {
 })
 // 配置路由
 const routes: Array<RouteRecordRaw> = []
-Object.values(modules).forEach((module) => {
-  routes.push(module.default)
+Object.keys(modules).forEach((key) => {
+  const module = modules[key].default
+  routes.push(module)
 })
 routes.push(aboutRouter)
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes
 })
-// function isLogin() {
-//     const token = sessionStorage.getItem('userInfo');
-//     if (token) {
-//         const objToken = JSON.parse(token);
-//         return objToken.accessToken ? true : false;
-//     } else {
-//         return false;
-//     }
-// }
+
+const handlerRouters = (currentName: string) => {
+  const settingStore = useSettingStore()
+  console.log('currentName', currentName)
+  console.log('router.getRoutes()', router.getRoutes())
+  const titles = getTitle(currentName, router.getRoutes())
+  settingStore.setTitle(titles)
+}
 const noStatusPage = ['/login', '/about']
 router.beforeEach(async (_to, _from, next) => {
   NProgress.start()
-  const token = JSON.parse(sessionStorage.getItem('userInfo') || '{}')
-  const userIsLogin = !!token?.userState?.accessToken
+  const token = sessionStorage.getItem('userInfo')
+  const userIsLogin = token ? true : false
   if (userIsLogin || noStatusPage.includes(_to.path)) {
     next()
   } else {
     next('/login')
   }
+  handlerRouters(_to.name as string)
 })
 router.afterEach((_to) => {
   NProgress.done()

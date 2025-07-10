@@ -54,33 +54,86 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       ElementPlus({}),
       // 自动导入组件
       AutoImport({
-        imports: ['vue', 'vue-router'],
+        imports: [
+          'vue',
+          'vue-router',
+          'pinia',
+          {
+            'element-plus': ['ElMessage', 'ElMessageBox', 'ElNotification', 'ElLoading']
+          },
+          {
+            '@element-plus/icons-vue': [
+              'ArrowRight',
+              'ArrowLeft',
+              'ArrowUp',
+              'ArrowDown',
+              'Close',
+              'Setting',
+              'User',
+              'Search',
+              'Edit',
+              'Delete',
+              'Plus',
+              'Minus',
+              'Check',
+              'Warning',
+              'Info',
+              'Success',
+              'Error',
+              'Home',
+              'Menu',
+              'Refresh',
+              'Download',
+              'Upload',
+              'Share',
+              'Star',
+              'Heart',
+              'Eye',
+              'EyeClosed',
+              'Lock',
+              'Unlock',
+              'Key',
+              'Shield',
+              'Bell',
+              'Calendar',
+              'Clock',
+              'Location',
+              'Phone',
+              'Mail',
+              'Link',
+              'Copy',
+              'Cut',
+              'Paste',
+              'Save',
+              'Print',
+              'Camera',
+              'Video',
+              'Mic',
+              'Volume',
+              'VolumeMute',
+              'Play',
+              'Pause',
+              'Stop',
+              'Next',
+              'Previous',
+              'FastForward',
+              'Rewind',
+              'Shuffle',
+              'Repeat',
+              'Skip',
+              'SkipBack'
+            ]
+          }
+        ],
         eslintrc: {
           enabled: true
         },
-        resolvers: [
-          ElementPlusResolver(),
-          // https://icon-sets.iconify.design/
-          // IconsResolver({
-          //   componentPrefix: 'icon',
-          //   enabledCollections: ['carbon', 'mdi'] // 声明要用到的iconify集合
-          //   customCollections: ['my'] // 自定义集合
-          // })
-          IconsResolver()
-        ],
+        resolvers: [ElementPlusResolver(), IconsResolver()],
         dts: fileURLToPath(new URL('./types/auto-imports.d.ts', import.meta.url))
       }),
       // 自动注册组件
       Components({
-        resolvers: [
-          ElementPlusResolver(),
-          // IconsResolver({
-          //   prefix: 'icon',
-          //   enabledCollections: ['ep', 'pixelarticons'], // iconify的集合名称
-          //   customCollections: ['my']
-          // }),
-          IconsResolver()
-        ],
+        resolvers: [ElementPlusResolver(), IconsResolver()],
         dts: fileURLToPath(new URL('./types/components.d.ts', import.meta.url)),
         dirs: [fileURLToPath(new URL('./src/components/auto', import.meta.url))]
       }),

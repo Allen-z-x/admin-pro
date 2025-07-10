@@ -17,9 +17,8 @@
     </div>
   </el-drawer>
 </template>
-<script lant="ts" setup>
+<script lang="ts" setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store/user'
 const { userState } = useUserStore()
 const userName = userState.username

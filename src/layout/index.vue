@@ -6,12 +6,27 @@
     <el-container>
       <el-aside width="200px">
         <el-menu :default-active="activeMenu" :ellipsis="false" router>
-          <el-menu-item v-for="item in menuList" :key="item.path" :index="item.path">
-            <span>{{ item.meta.title }}</span>
-          </el-menu-item>
+          <template v-for="item in menuList" :key="item.path">
+            <el-menu-item v-if="!item.children" :index="item.path">
+              <span>{{ item.meta!.title }}</span>
+            </el-menu-item>
+            <el-sub-menu v-else :index="item.path">
+              <template #title>
+                <span>{{ item.meta?.title }}</span>
+              </template>
+              <el-menu-item v-for="subItem in item.children" :key="subItem.path" :index="subItem.path">
+                <span>{{ subItem.meta!.title }}</span>
+              </el-menu-item>
+            </el-sub-menu>
+          </template>
         </el-menu>
       </el-aside>
       <el-main>
+        <el-breadcrumb :separator-icon="ArrowRight">
+          <el-breadcrumb-item v-for="item in settingStore.title" :key="item" :to="{ name: item }">
+            {{ item }}
+          </el-breadcrumb-item>
+        </el-breadcrumb>
         <router-view></router-view>
       </el-main>
     </el-container>
@@ -19,11 +34,19 @@
 </template>
 
 <script lang="ts" setup>
-import { useRouter, useRoute } from 'vue-router'
+import { ArrowRight } from '@element-plus/icons-vue'
+import { useSettingStore } from '@/store/setting'
 import Header from './components/Header.vue'
+const settingStore = useSettingStore()
 const router = useRouter()
 const route = useRoute()
-const menuList = router.getRoutes().filter((route) => route.meta.isShow)
+console.log('router.getRoutes()', router.options.routes[0])
+// const menuList = router.getRoutes().filter((route) => {
+//     return route.meta.isShow;
+// });
+const menuList = router.options.routes[0].children?.filter((item) => {
+  return item.meta?.isShow
+})
 const activeMenu = route.path
 </script>
 <style scoped lang="less">
@@ -38,5 +61,9 @@ const activeMenu = route.path
   .el-menu {
     height: 100%;
   }
+}
+
+.el-breadcrumb {
+  margin-bottom: 10px;
 }
 </style>

@@ -5,6 +5,7 @@ import tsPlugin from '@typescript-eslint/eslint-plugin'
 import js from '@eslint/js'
 import prettier from 'eslint-config-prettier'
 import globals from 'globals'
+import autoImportGlobals from './.eslintrc-auto-import.json' assert { type: 'json' }
 
 export default [
   {
@@ -35,39 +36,9 @@ export default [
       globals: {
         ...globals.browser,
         ...globals.node,
+        ...autoImportGlobals.globals,
         axios: 'readonly',
-        Vue: 'readonly',
-        // Vue 3 Composition API
-        ref: 'readonly',
-        reactive: 'readonly',
-        computed: 'readonly',
-        watch: 'readonly',
-        watchEffect: 'readonly',
-        onMounted: 'readonly',
-        onUnmounted: 'readonly',
-        onUpdated: 'readonly',
-        onBeforeMount: 'readonly',
-        onBeforeUnmount: 'readonly',
-        onBeforeUpdate: 'readonly',
-        nextTick: 'readonly',
-        toRef: 'readonly',
-        toRefs: 'readonly',
-        unref: 'readonly',
-        isRef: 'readonly',
-        isReactive: 'readonly',
-        isReadonly: 'readonly',
-        isProxy: 'readonly',
-        markRaw: 'readonly',
-        shallowRef: 'readonly',
-        shallowReactive: 'readonly',
-        triggerRef: 'readonly',
-        customRef: 'readonly',
-        provide: 'readonly',
-        inject: 'readonly',
-        defineProps: 'readonly',
-        defineEmits: 'readonly',
-        defineExpose: 'readonly',
-        withDefaults: 'readonly'
+        Vue: 'readonly'
       }
     },
     plugins: {
