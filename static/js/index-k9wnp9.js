@@ -1,0 +1,1 @@
+import{B as r,z as n,f as s,w as c,a as p,b as _,a1 as i,a2 as u,a3 as l,a4 as m,a5 as f}from"./vendor-D0oV6N-p.js";import{b as d}from"./common-DRkHVigx.js";const v={__name:"App",setup(w){return(C,h)=>{const o=r("router-view"),t=u;return s(),n(t,{locale:_(i)},{default:c(()=>[p(o)]),_:1},8,["locale"])}}},a=l();a.use(m);const e=f(v);e.use(d);e.use(a);e.mount("#app");
