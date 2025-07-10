@@ -1,5 +1,7 @@
 import { defineConfig, loadEnv } from 'vite'
 import { viteMockServe } from 'vite-plugin-mock'
+import externalGlobals from 'rollup-plugin-external-globals'
+import { visualizer } from 'rollup-plugin-visualizer'
 import type { UserConfig, ConfigEnv } from 'vite'
 import { fileURLToPath } from 'url'
 import AutoImport from 'unplugin-auto-import/vite'
@@ -12,6 +14,18 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import commonjs from 'vite-plugin-commonjs'
+import ViteCompression from 'vite-plugin-compression'
+import brotli from 'rollup-plugin-brotli'
+import { createHtmlPlugin } from 'vite-plugin-html'
+import { manualChunksPlugin } from 'vite-plugin-webpackchunkname'
+
+const globals = externalGlobals({
+  moment: 'moment',
+  'video.js': 'videojs',
+  jspdf: 'jspdf',
+  xlsx: 'XLSX',
+  echart: 'echart'
+})
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   // 获取当前工作目录
   const root = process.cwd()
@@ -38,6 +52,23 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       }
     },
     plugins: [
+      createHtmlPlugin({
+        inject: {
+          data: {
+            monentscript: '<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.js"></script>',
+            videoscript: '<script src="https://cdn.jsdelivr.net/npm/video.js@7.14.3/dist/video.min.js"></script>',
+            echartscript: '<script src="https://cdn.jsdelivr.net/npm/echarts@5.2.1/echarts"></script>',
+            jspdfscript: '<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/pdf.js"></script>',
+            xlsxscript: '<script src="https://cdn.jsdelivr.net/npm/xlsx@0.17.4/dist/xlsx.full.min.js"></script>'
+          }
+        }
+      }),
+      // brotli({}),
+      // ViteCompression({
+      //   threshold: 1024 * 20, // 超过20kb才进行压缩
+      //   ext: '.gz', // 压缩后缀
+      //   algorithm: 'gzip' // 压缩算法
+      // }),
       // 自动将 CommonJS 模块转换为 ES Modules
       commonjs(),
       // Vue模板文件编译插件
@@ -135,14 +166,16 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       Components({
         resolvers: [ElementPlusResolver(), IconsResolver()],
         dts: fileURLToPath(new URL('./types/components.d.ts', import.meta.url)),
-        dirs: [fileURLToPath(new URL('./src/components/auto', import.meta.url))]
+        dirs: [fileURLToPath(new URL('./src/components/auto', import.meta.url))],
+        include: [/\.vue$/, /\.vue\?/]
       }),
       Icons({
         autoInstall: true
         // customCollections: {
         //   'my': FileSystemIconLoader('src/assets/icons'),
         // }
-      })
+      }),
+      manualChunksPlugin()
     ],
     // 运行后本地预览的服务器
     server: {
@@ -188,12 +221,34 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         input: {
           index: fileURLToPath(new URL('./index.html', import.meta.url))
         },
+        external: ['moment', 'video.js', 'jspdf', 'xlsx', 'echart'],
+        plugins: [visualizer({ open: true }), globals],
+        // experimentalLogSideEffects: true,
+        treeshake: {
+          preset: 'recommended'
+          // propertyReadSideEffects: true
+        },
         // 静态资源分类打包
         output: {
-          format: 'esm',
-          chunkFileNames: 'static/js/[name]-[hash].js',
-          entryFileNames: 'static/js/[name]-[hash].js',
-          assetFileNames: 'static/[ext]/[name]-[hash].[ext]'
+          experimentalMinChunkSize: 20 * 1024,
+          manualChunks: (id: string) => {
+            if (id.includes('html-canvans')) {
+              return 'html-canvans'
+            }
+            if (id.includes('node_modules')) {
+              return 'vendor'
+            }
+            // if (id.includes('src/views/about')) {
+            //   return 'about'
+            // }
+            // if (id.includes('src/views/auth')) {
+            //   return 'auth'
+            // }
+            // return 'index';
+          },
+          chunkFileNames: 'static/js/[name]-[hash].js', // 代码分割后文件名
+          entryFileNames: 'static/js/[name]-[hash:6].js', // 入口文件名
+          assetFileNames: 'static/[ext]/[name]-[hash].[ext]' // 静态资源文件名
         }
       }
     },
