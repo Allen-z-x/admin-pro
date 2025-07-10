@@ -30,6 +30,13 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     base: './',
     publicDir: fileURLToPath(new URL('./public', import.meta.url)), // 无需处理的静态资源位置
     assetsInclude: fileURLToPath(new URL('./src/assets', import.meta.url)), // 需要处理的静态资源位置
+    css: {
+      preprocessorOptions: {
+        less: {
+          additionalData: `@import '@/styles/variable.less';`
+        }
+      }
+    },
     plugins: [
       // 自动将 CommonJS 模块转换为 ES Modules
       commonjs(),
@@ -74,7 +81,8 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
           // }),
           IconsResolver()
         ],
-        dts: fileURLToPath(new URL('./types/components.d.ts', import.meta.url))
+        dts: fileURLToPath(new URL('./types/components.d.ts', import.meta.url)),
+        dirs: [fileURLToPath(new URL('./src/components/auto', import.meta.url))]
       }),
       Icons({
         autoInstall: true
