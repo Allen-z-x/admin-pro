@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig, AxiosRequestConfig } from 'axios'
-import { ElMessage } from 'element-plus'
+import { showNotify } from 'vant'
 import { getMessageInfo } from './status'
 
 interface BaseResponse<T = any> {
@@ -30,9 +30,9 @@ service.interceptors.response.use(
     if (response.status === 200) {
       return response
     }
-    ElMessage({
+    showNotify({
       message: getMessageInfo(response.status),
-      type: 'error'
+      type: 'danger'
     })
     return response
   },
@@ -40,15 +40,15 @@ service.interceptors.response.use(
   (error: any) => {
     const { response } = error
     if (response) {
-      ElMessage({
+      showNotify({
         message: getMessageInfo(response.status),
-        type: 'error'
+        type: 'danger'
       })
       return Promise.reject(response.data)
     }
-    ElMessage({
+    showNotify({
       message: '网络连接异常,请稍后再试!',
-      type: 'error'
+      type: 'danger'
     })
   }
 )
@@ -61,13 +61,13 @@ const requestInstance = <T = any>(config: AxiosRequestConfig): Promise<T> => {
     service.request<any, AxiosResponse<BaseResponse>>(conf).then((res: AxiosResponse<BaseResponse>) => {
       const data = res.data // 如果data.code为错误代码返回message信息
       if (data.code != 0) {
-        ElMessage({
+        showNotify({
           message: data.message,
-          type: 'error'
+          type: 'danger'
         })
         reject(data.message)
       } else {
-        ElMessage({
+        showNotify({
           message: data.message,
           type: 'success'
         }) // 此处返回data信息 也就是 api 中配置好的 Response类型
