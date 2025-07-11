@@ -1,13 +1,14 @@
 <template>
-  <el-config-provider :locale="zhCn">
-    <router-view></router-view>
-  </el-config-provider>
+  <!-- 开启顶部安全区适配 -->
+  <van-nav-bar safe-area-inset-top />
+  <router-view></router-view>
+  <!-- 开启底部安全区适配 -->
+  <van-number-keyboard safe-area-inset-bottom />
 </template>
-<script setup>
-import zhCn from 'element-plus/es/locale/lang/zh-cn'
-</script>
+<script setup></script>
 <style lang="less">
 #app {
+  width: 100vw;
   height: 100vh;
 }
 </style>

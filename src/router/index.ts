@@ -1,16 +1,6 @@
 import { RouteRecordRaw, createRouter, createWebHashHistory } from 'vue-router'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-import { useSettingStore } from '@/store/setting'
-import { getTitle } from '@/utils'
-
-export const aboutRouter = {
-  path: '/about',
-  name: 'about',
-  component: () => import('@/views/about/index.vue'),
-  meta: {},
-  children: []
-} as RouteRecordRaw
 
 // 组合路由信息
 // import.meta.glob 为 vite 提供的特殊导入方式
@@ -25,31 +15,15 @@ Object.keys(modules).forEach((key) => {
   const module = modules[key].default
   routes.push(module)
 })
-routes.push(aboutRouter)
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes
 })
 
-const handlerRouters = (currentName: string) => {
-  const settingStore = useSettingStore()
-  console.log('currentName', currentName)
-  console.log('router.getRoutes()', router.getRoutes())
-  const titles = getTitle(currentName, router.getRoutes())
-  settingStore.setTitle(titles)
-}
-const noStatusPage = ['/login', '/about']
 router.beforeEach(async (_to, _from, next) => {
   NProgress.start()
-  const token = sessionStorage.getItem('userInfo')
-  const userIsLogin = token ? true : false
-  if (userIsLogin || noStatusPage.includes(_to.path)) {
-    next()
-  } else {
-    next('/login')
-  }
-  handlerRouters(_to.name as string)
+  next()
 })
 router.afterEach((_to) => {
   NProgress.done()
