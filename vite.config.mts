@@ -8,8 +8,6 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Icons from 'unplugin-icons/vite'
 import Components from 'unplugin-vue-components/vite'
 import IconsResolver from 'unplugin-icons/resolver'
-// import ElementPlus from 'unplugin-element-plus/vite';
-// import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import { VantResolver } from '@vant/auto-import-resolver'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
@@ -80,8 +78,6 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         mockPath: 'mock', // 数据模拟需要拦截的请求起始 URL
         enable: true // 本地环境是否开启 mock 功能
       }),
-      // 开启ElementPlus自动引入CSS
-      // ElementPlus({}),
       // 自动导入组件
       AutoImport({
         // 定义需要自动引入的框架
